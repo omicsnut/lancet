@@ -39,11 +39,11 @@ string buildCommandLine(int argc, char** argv) {
 }
 
 // return file name without extension
-StringType GetBaseFilename(const char *filename)
+std::string GetBaseFilename(const char *filename)
 {
-    StringType fName(filename);
+    std::string fName(filename);
     size_t pos = fName.rfind(".");
-    if(pos == StringType::npos)  //No extension.
+    if(pos == std::string::npos)  //No extension.
         return fName;
 
     if(pos == 0)    //. is at the front. Not an extension.

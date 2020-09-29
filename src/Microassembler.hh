@@ -62,7 +62,6 @@
 #include "ErrorCorrector.hh"
 
 using namespace std;
-using namespace HASHMAP;
 using namespace BamTools;
 
 #define bvalue(value) ((value ? "true" : "false"))
