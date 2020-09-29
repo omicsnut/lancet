@@ -405,10 +405,10 @@ int rLancet(string tumor_bam, string normal_bam, string ref_fasta, string reg, s
 
 	bool errflg = false;
 
-	if (TUMOR == "") { cerr << "ERROR: Must provide the tumor BAM file (-t)" << endl; ++errflg; }
-	if (NORMAL == "") { cerr << "ERROR: Must provide the normal BAM file (-n)" << endl; ++errflg; }		
-	if (REFFILE == "") { cerr << "ERROR: Must provide a reference genome file (-r)" << endl; ++errflg; }
-	if ( (BEDFILE == "") && (REGION == "") ) { cerr << "ERROR: Must provide region (-p) or BED file (-B)" << endl; ++errflg; }
+	if (TUMOR == "") { cerr << "ERROR: Must provide the tumor BAM file (-t)" << endl; errflg=true; }
+	if (NORMAL == "") { cerr << "ERROR: Must provide the normal BAM file (-n)" << endl; errflg=true; }		
+	if (REFFILE == "") { cerr << "ERROR: Must provide a reference genome file (-r)" << endl; errflg=true; }
+	if ( (BEDFILE == "") && (REGION == "") ) { cerr << "ERROR: Must provide region (-p) or BED file (-B)" << endl; errflg=true; }
 
 	if (errflg) { exit(EXIT_FAILURE); }
 	
@@ -787,10 +787,10 @@ int main(int argc, char** argv)
 	MIN_QUAL_TRIM = MIN_QV_TRIM + QV_RANGE;
 	MIN_QUAL_CALL = MIN_QV_CALL + QV_RANGE;
 
-	if (TUMOR == "") { cerr << "ERROR: Must provide the tumor BAM file (-t)" << endl; ++errflg; }
-	if (NORMAL == "") { cerr << "ERROR: Must provide the normal BAM file (-n)" << endl; ++errflg; }		
-	if (REFFILE == "") { cerr << "ERROR: Must provide a reference genome file (-r)" << endl; ++errflg; }
-	if ( (BEDFILE == "") && (REGION == "") ) { cerr << "ERROR: Must provide region (-p) or BED file (-B)" << endl; ++errflg; }
+	if (TUMOR == "") { cerr << "ERROR: Must provide the tumor BAM file (-t)" << endl; errflg=true; }
+	if (NORMAL == "") { cerr << "ERROR: Must provide the normal BAM file (-n)" << endl; errflg=true; }		
+	if (REFFILE == "") { cerr << "ERROR: Must provide a reference genome file (-r)" << endl; errflg=true; }
+	if ( (BEDFILE == "") && (REGION == "") ) { cerr << "ERROR: Must provide region (-p) or BED file (-B)" << endl; errflg=true; }
 
 	if (errflg) { exit(EXIT_FAILURE); }
 	
