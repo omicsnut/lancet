@@ -1,0 +1,46 @@
+include(ExternalProject)
+find_program(MAKE_EXE NAMES gmake nmake make)
+set(DEPS_DIR "${CMAKE_BINARY_DIR}/_deps")
+
+set(HTSLIB_ROOT_DIR "${DEPS_DIR}//htslib")
+set(HTSLIB_INCLUDE_DIR "${HTSLIB_ROOT_DIR}")
+set(LIBHTS "${HTSLIB_ROOT_DIR}/libhts.a")
+ExternalProject_Add(
+  htslib
+  URL https://github.com/samtools/htslib/releases/download/1.11/htslib-1.11.tar.bz2
+  URL_MD5 c488c7a79283e5252c04cae335ee80e8
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/_deps"
+  SOURCE_DIR ${HTSLIB_ROOT_DIR}
+  BUILD_IN_SOURCE 1
+  INSTALL_COMMAND ""
+  BUILD_COMMAND ${MAKE_EXE} lib-static
+  CONFIGURE_COMMAND ${CMAKE_SOURCE_DIR}/scripts/htslib_config.sh
+                    ${HTSLIB_ROOT_DIR} ${CMAKE_C_COMPILER}
+  BUILD_BYPRODUCTS ${LIBHTS}
+  LOG_DOWNLOAD ON
+  LOG_CONFIGURE ON
+  LOG_BUILD ON
+  USES_TERMINAL_DOWNLOAD OFF
+  USER_TERMINAL_CONFIGURE OFF
+  USES_TERMINAL_BUILD OFF)
+
+set(BAMTOOLS_ROOT_DIR "${DEPS_DIR}//bamtools")
+set(BAMTOOLS_INCLUDE_DIR "${BAMTOOLS_ROOT_DIR}/src")
+set(LIBBAMTOOLS "${DEPS_DIR}/src/bamtools-build/src/api/libbamtools.a")
+
+ExternalProject_Add(
+  bamtools
+  GIT_REPOSITORY https://github.com/pezmaster31/bamtools.git
+  GIT_TAG 2391b1a
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/_deps"
+  SOURCE_DIR ${BAMTOOLS_ROOT_DIR}
+  CMAKE_GENERATOR "Unix Makefiles"
+  BUILD_COMMAND ${MAKE_EXE} BamTools
+  INSTALL_COMMAND ""
+  BUILD_BYPRODUCTS ${LIBBAMTOOLS}
+  LOG_DOWNLOAD ON
+  LOG_CONFIGURE ON
+  LOG_BUILD ON
+  USES_TERMINAL_DOWNLOAD OFF
+  USER_TERMINAL_CONFIGURE OFF
+  USES_TERMINAL_BUILD OFF)
