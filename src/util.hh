@@ -23,37 +23,41 @@
 **
 *************************** /COPYRIGHT **************************************/
 
-#include <string>
+#include <assert.h>
+
+#include <map>
 #include <set>
 #include <sstream>
-#include <assert.h>
-#include <map>
+#include <string>
 
 #include "api/BamReader.h"
 
 using namespace BamTools;
 
-std::string buildCommandLine(int argc, char** argv);
+std::string buildCommandLine(int argc, char **argv);
 std::string GetBaseFilename(const char *filename);
-FILE * xfopen(const std::string & filename, const std::string & mode);
-void xfclose(FILE * fp);
+FILE *xfopen(const std::string &filename, const std::string &mode);
+void xfclose(FILE *fp);
 std::string itos(int i);
 std::string dtos(double d);
 bool isDNA(char b);
 bool isAmbiguos(char b);
 char rrc(char b);
-std::string rc_str(const std::string & str);
-void reverse(std::string & str);
-bool Fasta_Read(FILE * fp, std::string & s, std::string & hdr);
-bool isNseq(const std::string & seq);
-int HammingDistance(const std::string & s1, const std::string & s2);
-bool isRepeat(const std::string & seq, int K);
-bool isAlmostRepeat(const std::string & seq, int K, int max);
-bool kMismatch(size_t s, size_t e, const std::string & t, size_t start, int max);
+std::string rc_str(const std::string &str);
+void reverse(std::string &str);
+bool Fasta_Read(FILE *fp, std::string &s, std::string &hdr);
+bool isNseq(const std::string &seq);
+int HammingDistance(const std::string &s1, const std::string &s2);
+bool isRepeat(const std::string &seq, int K);
+bool isAlmostRepeat(const std::string &seq, int K, int max);
+bool kMismatch(size_t s, size_t e, const std::string &t, size_t start, int max);
 bool seqAboveQual(std::string qv, int Q);
 bool checkPresenceOfMDtag(BamReader &reader);
-void parseMD(std::string & md, std::map<int,int> & map, int start, std::string & qual, int min_qv);
+void parseMD(std::string &md, std::map<int, int> &map, int start,
+             std::string &qual, int min_qv);
 float extract_sam_tag(const std::string &TAG, BamAlignment &al);
-bool findTandems(const std::string & seq, const std::string & tag, int max_unit_len, int min_report_units, int min_report_len, int dist_from_str, int pos, int & len, std::string & motif);
+bool findTandems(const std::string &seq, const std::string &tag,
+                 int max_unit_len, int min_report_units, int min_report_len,
+                 int dist_from_str, int pos, int &len, std::string &motif);
 
 #endif

@@ -80,5 +80,6 @@
         "OPENSSL_ROOT_DIR": "/usr/local/opt/openssl"
     },
     "cmake.skipConfigureIfCachePresent": true,
-    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "editor.formatOnSave": true
 }

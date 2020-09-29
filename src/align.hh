@@ -23,23 +23,24 @@
 **
 *************************** /COPYRIGHT **************************************/
 
-#include <iostream>
-#include <string>
 #include <cstdio>
 #include <cstdlib>
-#include <vector>
+#include <iostream>
 #include <sstream>
+#include <string>
+#include <vector>
 
-void global_align(const std::string & S, const std::string & T,
-                  std::string & S_aln, std::string & T_aln,
-                  int endfree, int verbose);
+void global_align(const std::string& S, const std::string& T,
+                  std::string& S_aln, std::string& T_aln, int endfree,
+                  int verbose);
 
-void global_align_aff(const std::string & S, const std::string & T,
-                      std::string & S_aln, std::string & T_aln,
-                      int endfree, int verbose);
- 
-void global_cov_align_aff(const std::string & S, const std::string & T, const std::vector<int> & CT,
-	                  std::string & S_aln, std::string & T_aln, std::vector<int> & CT_aln,
-					  int endfree, int verbose);
+void global_align_aff(const std::string& S, const std::string& T,
+                      std::string& S_aln, std::string& T_aln, int endfree,
+                      int verbose);
+
+void global_cov_align_aff(const std::string& S, const std::string& T,
+                          const std::vector<int>& CT, std::string& S_aln,
+                          std::string& T_aln, std::vector<int>& CT_aln,
+                          int endfree, int verbose);
 
 #endif

@@ -29,123 +29,142 @@
 
 using namespace std;
 
-class ErrorCorrector
-{
-public:
+class ErrorCorrector {
+ public:
+  ErrorCorrector() {}
 
-	ErrorCorrector() { }
-	
-	void mersRecovery(MerTable_t & nodes_m, int MIN_SUPPORT, int MIN_QV) {
-		
-		//cerr << "mers recovery" << endl;
-	
-		char BP[4] = { 'A', 'C', 'G', 'T'};
-		
-		MerTable_t::iterator mi;
-		MerTable_t::iterator mjF;
-		MerTable_t::iterator mjR;
-	
-		for (mi = nodes_m.begin(); mi != nodes_m.end(); mi++) {
-			Node_t * nodeA = mi->second;
-						
-			if(nodeA->getTotTmrCov() == 1) { // only process tumor singletons
-			
-				Mer_t merA = mi->first;
-				Mer_t merA_original = merA;
-				char old_bp;
-				// test changing each bp in the mer
-				
-				int num_changes = 0; // number of succesfull bp changes for this mer
-				for (unsigned int i=0; i<merA.size(); i++) {
-					
-					//if(num_changes > 0) { break; } // allow only one base to be changed per mer
-						
-					int qv_covA = (nodeA->cov_distr_tmr[i]).minqv_fwd + (nodeA->cov_distr_tmr[i]).minqv_rev;
-					if(qv_covA == 0) { // if low quality base in tumor
-					
-						// change bp to any of the 3 other possibile bp
-						old_bp = merA[i]; // save old bp
-						for (unsigned int j=0; j<4; j++) {
-							if(BP[j] != merA[i]) { merA[i] = BP[j]; }
-					
-							// search for the modified mer (both fwd and rev)
-							Mer_t merAr = rc_str(merA);
-							mjF = nodes_m.find(merA); // forward
-							mjR = nodes_m.find(merAr); // reverse
+  void mersRecovery(MerTable_t& nodes_m, int MIN_SUPPORT, int MIN_QV) {
+    // cerr << "mers recovery" << endl;
 
-							// update forward mer (if found)
-							if(mjF != nodes_m.end() && mjF != mi) { 
-								Mer_t merB = mjF->first;
-								Node_t * nodeB = mjF->second;
-								int qv_covB = (nodeB->cov_distr_tmr[i]).minqv_fwd + (nodeB->cov_distr_tmr[i]).minqv_rev;
-					
-								// merB has only 1 difference from merA
-								// only use mers with support >= MIN_SUPPORT and with high quality for base of interest
-								if( (nodeB->getTotTmrCov() >= MIN_SUPPORT) && (qv_covB > 0) ) {
-									num_changes++;
-									//cerr << merA_original << "(" << nodeA->getTotTmrCov() << ")\t" << merB << "(" << nodeB->getTotTmrCov() << ")" << "\t" << old_bp << "->" << BP[j] << "\t" << num_changes << endl;
-									
-									// retrive strand info
-									unsigned int strand;
-									if(nodeA->getTmrCov(FWD)>0) { strand = FWD; }
-									else { strand = REV; }
-								
-									nodeB->incTmrCov(strand);
-									//nodeB->updateCovDistr((int)(nodeB->getTmrCov(strand)),strand,'T');
-									//ref_m->updateCoverage(merB, 'T'); // update referecne k-mer coverage for tumor
-									//nodeB->updateCovDistrMinQV(uc_qv,strand,'T');
-								}
-							}
-							
-							// update reverse mer (if found)
-							if(mjR != nodes_m.end() && mjR != mi) { 
-								Mer_t merB = mjR->first;
-								Node_t * nodeB = mjR->second;
-								
-								// for reverse complement need to adjust array index to find correct base position
-								int M = merB.size()-1;
-								int qv_covB = (nodeB->cov_distr_tmr[M-i]).minqv_fwd + (nodeB->cov_distr_tmr[M-i]).minqv_rev;
-					
-								// merB has only 1 difference from merA
-								// only use mers with support >= 2
-								if( (nodeB->getTotTmrCov() >= MIN_SUPPORT) && (qv_covB > 0) ) {
-									num_changes++;
-									//cerr << merA_original << "(" << nodeA->getTotTmrCov() << ")\t" << merB << "(" << nodeB->getTotTmrCov() << ")" << "\t" << old_bp << "->" << BP[j] << "\t" << num_changes << endl;
-									
-									// retrive strand info
-									unsigned int strand;
-									if(nodeA->getTmrCov(FWD)>0) { strand = FWD; }
-									else { strand = REV; }
-								
-									nodeB->incTmrCov(strand);
-									//nodeB->updateCovDistr((int)(nodeB->getTmrCov(strand)),strand,'T');
-									//ref_m->updateCoverage(merB, 'T'); // update referecne k-mer coverage for tumor
-									//nodeB->updateCovDistrMinQV(uc_qv,strand,'T');
-								}
-							}
-							
-							
-						}
-						merA[i] = old_bp; //revert changed bp
-					}		
-				}
-			}
-		}
-	}
-	
-	bool oneMismatch(Mer_t & a, Mer_t & b) {
-		
-		int cnt = 0; 
-		bool ans = true;
-		
-		for (unsigned int i=0; i<a.size(); i++) {
-			if (a[i]!=b[i]) { cnt++; }
-			if(cnt>1) { ans = false; break; }
-		}
-		
-		return ans;
-	}
-	
+    char BP[4] = {'A', 'C', 'G', 'T'};
+
+    MerTable_t::iterator mi;
+    MerTable_t::iterator mjF;
+    MerTable_t::iterator mjR;
+
+    for (mi = nodes_m.begin(); mi != nodes_m.end(); mi++) {
+      Node_t* nodeA = mi->second;
+
+      if (nodeA->getTotTmrCov() == 1) {  // only process tumor singletons
+
+        Mer_t merA = mi->first;
+        Mer_t merA_original = merA;
+        char old_bp;
+        // test changing each bp in the mer
+
+        int num_changes = 0;  // number of succesfull bp changes for this mer
+        for (unsigned int i = 0; i < merA.size(); i++) {
+          // if(num_changes > 0) { break; } // allow only one base to be changed
+          // per mer
+
+          int qv_covA = (nodeA->cov_distr_tmr[i]).minqv_fwd +
+                        (nodeA->cov_distr_tmr[i]).minqv_rev;
+          if (qv_covA == 0) {  // if low quality base in tumor
+
+            // change bp to any of the 3 other possibile bp
+            old_bp = merA[i];  // save old bp
+            for (unsigned int j = 0; j < 4; j++) {
+              if (BP[j] != merA[i]) {
+                merA[i] = BP[j];
+              }
+
+              // search for the modified mer (both fwd and rev)
+              Mer_t merAr = rc_str(merA);
+              mjF = nodes_m.find(merA);   // forward
+              mjR = nodes_m.find(merAr);  // reverse
+
+              // update forward mer (if found)
+              if (mjF != nodes_m.end() && mjF != mi) {
+                Mer_t merB = mjF->first;
+                Node_t* nodeB = mjF->second;
+                int qv_covB = (nodeB->cov_distr_tmr[i]).minqv_fwd +
+                              (nodeB->cov_distr_tmr[i]).minqv_rev;
+
+                // merB has only 1 difference from merA
+                // only use mers with support >= MIN_SUPPORT and with high
+                // quality for base of interest
+                if ((nodeB->getTotTmrCov() >= MIN_SUPPORT) && (qv_covB > 0)) {
+                  num_changes++;
+                  // cerr << merA_original << "(" << nodeA->getTotTmrCov() <<
+                  // ")\t" << merB << "(" << nodeB->getTotTmrCov() << ")" <<
+                  // "\t"
+                  // << old_bp << "->" << BP[j] << "\t" << num_changes << endl;
+
+                  // retrive strand info
+                  unsigned int strand;
+                  if (nodeA->getTmrCov(FWD) > 0) {
+                    strand = FWD;
+                  } else {
+                    strand = REV;
+                  }
+
+                  nodeB->incTmrCov(strand);
+                  // nodeB->updateCovDistr((int)(nodeB->getTmrCov(strand)),strand,'T');
+                  // ref_m->updateCoverage(merB, 'T'); // update referecne k-mer
+                  // coverage for tumor
+                  // nodeB->updateCovDistrMinQV(uc_qv,strand,'T');
+                }
+              }
+
+              // update reverse mer (if found)
+              if (mjR != nodes_m.end() && mjR != mi) {
+                Mer_t merB = mjR->first;
+                Node_t* nodeB = mjR->second;
+
+                // for reverse complement need to adjust array index to find
+                // correct base position
+                int M = merB.size() - 1;
+                int qv_covB = (nodeB->cov_distr_tmr[M - i]).minqv_fwd +
+                              (nodeB->cov_distr_tmr[M - i]).minqv_rev;
+
+                // merB has only 1 difference from merA
+                // only use mers with support >= 2
+                if ((nodeB->getTotTmrCov() >= MIN_SUPPORT) && (qv_covB > 0)) {
+                  num_changes++;
+                  // cerr << merA_original << "(" << nodeA->getTotTmrCov() <<
+                  // ")\t" << merB << "(" << nodeB->getTotTmrCov() << ")" <<
+                  // "\t"
+                  // << old_bp << "->" << BP[j] << "\t" << num_changes << endl;
+
+                  // retrive strand info
+                  unsigned int strand;
+                  if (nodeA->getTmrCov(FWD) > 0) {
+                    strand = FWD;
+                  } else {
+                    strand = REV;
+                  }
+
+                  nodeB->incTmrCov(strand);
+                  // nodeB->updateCovDistr((int)(nodeB->getTmrCov(strand)),strand,'T');
+                  // ref_m->updateCoverage(merB, 'T'); // update referecne k-mer
+                  // coverage for tumor
+                  // nodeB->updateCovDistrMinQV(uc_qv,strand,'T');
+                }
+              }
+            }
+            merA[i] = old_bp;  // revert changed bp
+          }
+        }
+      }
+    }
+  }
+
+  bool oneMismatch(Mer_t& a, Mer_t& b) {
+    int cnt = 0;
+    bool ans = true;
+
+    for (unsigned int i = 0; i < a.size(); i++) {
+      if (a[i] != b[i]) {
+        cnt++;
+      }
+      if (cnt > 1) {
+        ans = false;
+        break;
+      }
+    }
+
+    return ans;
+  }
 };
 
 #endif

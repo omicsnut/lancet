@@ -23,49 +23,54 @@
 **
 *************************** /COPYRIGHT **************************************/
 
-#include <map>
-#include <unordered_map>
-#include <string>
 #include <iostream>
-#include "util.hh"
+#include <map>
+#include <string>
+#include <unordered_map>
+
 #include "Variant.hh"
 #include "sha256.hh"
+#include "util.hh"
 
 using namespace std;
 
-struct byPos
-{
-	bool operator()(pair<string,Variant_t> first, pair<string,Variant_t> second) const {
-		
-		bool ans = true;
-		string chr1 = (first.second).chr; 
-		int pos1 = (first.second).pos; 
-		string chr2 = (second.second).chr; 
-		int pos2 = (second.second).pos; 
-	
-		int cmp = chr1.compare(chr2);
-		if (cmp == 0) { ans = (pos1 < pos2); }
-		else if (cmp < 0) { ans = true; }
-		else if (cmp > 0) { ans = false; }
-	
-		return ans;
-	}
+struct byPos {
+  bool operator()(pair<string, Variant_t> first,
+                  pair<string, Variant_t> second) const {
+    bool ans = true;
+    string chr1 = (first.second).chr;
+    int pos1 = (first.second).pos;
+    string chr2 = (second.second).chr;
+    int pos2 = (second.second).pos;
+
+    int cmp = chr1.compare(chr2);
+    if (cmp == 0) {
+      ans = (pos1 < pos2);
+    } else if (cmp < 0) {
+      ans = true;
+    } else if (cmp > 0) {
+      ans = false;
+    }
+
+    return ans;
+  }
 };
 
-class VariantDB_t
-{
-public:
+class VariantDB_t {
+ public:
+  map<string, Variant_t> DB;  // databbase of variants
+  unordered_map<string, int>
+      nCNT;             // counts of variants per postion in the normal
+  string command_line;  // command line used to run the tool
 
-	map<string,Variant_t> DB; // databbase of variants
-	unordered_map<string,int> nCNT; // counts of variants per postion in the normal
-	string command_line; // command line used to run the tool
+  VariantDB_t() {}
 
-	VariantDB_t() {}
-	
-	void setCommandLine(string cl) { command_line = cl; }
-	void addVar(Variant_t v);
-	void printHeader(const string version, const string reference, char * date, Filters &fs, string &sample_name_N, string &sample_name_T);
-	void printToVCF(const string version, const string reference, char * date, Filters &fs, string &sample_name_N, string &sample_name_T);
+  void setCommandLine(string cl) { command_line = cl; }
+  void addVar(Variant_t v);
+  void printHeader(const string version, const string reference, char *date,
+                   Filters &fs, string &sample_name_N, string &sample_name_T);
+  void printToVCF(const string version, const string reference, char *date,
+                  Filters &fs, string &sample_name_N, string &sample_name_T);
 };
 
 #endif

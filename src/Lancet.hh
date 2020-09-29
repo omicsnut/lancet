@@ -4,7 +4,7 @@
 /****************************************************************************
 ** Lancet.hh
 **
-** Tool for localized colored de Bruijn graph assembly to detect 
+** Tool for localized colored de Bruijn graph assembly to detect
 ** somatic genetic variants
 **
 *****************************************************************************/
@@ -70,8 +70,8 @@ int NODE_STRLEN = 100;
 int DFS_LIMIT = 1000000;
 int MAX_INDEL_LEN = 500;
 int MAX_MISMATCH = 2;
-	
-//STR parameters
+
+// STR parameters
 int MAX_UNIT_LEN = 4;
 int MIN_REPORT_UNITS = 3;
 int MIN_REPORT_LEN = 7;
@@ -89,15 +89,15 @@ int num_windows = 0;
 const char Graph_t::CODE_MAPPED = 'M';
 const char Graph_t::CODE_BASTARD = 'B';
 
-const string Graph_t::COLOR_ALL    = "white"; 
-const string Graph_t::COLOR_LOW    = "grey";
-const string Graph_t::COLOR_NOVO   = "darkorange3";
-const string Graph_t::COLOR_TUMOR  = "red";
+const string Graph_t::COLOR_ALL = "white";
+const string Graph_t::COLOR_LOW = "grey";
+const string Graph_t::COLOR_NOVO = "darkorange3";
+const string Graph_t::COLOR_TUMOR = "red";
 const string Graph_t::COLOR_NORMAL = "green";
-const string Graph_t::COLOR_SHARED = "blue"; //"deepskyblue4";
+const string Graph_t::COLOR_SHARED = "blue";  //"deepskyblue4";
 const string Graph_t::COLOR_SOURCE = "orange\" style=\"filled";
-const string Graph_t::COLOR_SINK   = "yellow\" style=\"filled";
-const string Graph_t::COLOR_TOUCH  = "magenta";
+const string Graph_t::COLOR_SINK = "yellow\" style=\"filled";
+const string Graph_t::COLOR_TOUCH = "magenta";
 
 /***********************************/
 
@@ -105,19 +105,23 @@ const string Graph_t::COLOR_TOUCH  = "magenta";
 void printUsage();
 
 // print help text to stderr
-void printHelpText(Filters & filters);
+void printHelpText(Filters &filters);
 
 // print configuration to file
-void printConfiguration(ostream & out, Filters & filters);
+void printConfiguration(ostream &out, Filters &filters);
 
 // load referecne for fasta file
-int loadRefs(const string reference, const string region, vector< map<string, Ref_t *> > &reftable, RefVector &bamrefs, int num_threads, int thread);
+int loadRefs(const string reference, const string region,
+             vector<map<string, Ref_t *> > &reftable, RefVector &bamrefs,
+             int num_threads, int thread);
 
 // loadbed : load regions from BED file
-void loadBed(const string bedfile, vector< map<string, Ref_t *> > &reftable, RefVector &bamrefs, int num_threads);
+void loadBed(const string bedfile, vector<map<string, Ref_t *> > &reftable,
+             RefVector &bamrefs, int num_threads);
 
-static void* execute(void* ptr);
+static void *execute(void *ptr);
 
-int rLancet(string tumor_bam, string normal_bam, string ref_fasta, string reg, string bed_file, int numthreads);
+int rLancet(string tumor_bam, string normal_bam, string ref_fasta, string reg,
+            string bed_file, int numthreads);
 
 #endif

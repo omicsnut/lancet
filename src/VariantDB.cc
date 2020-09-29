@@ -1,6 +1,6 @@
-#include <vector>
-
 #include "VariantDB.hh"
+
+#include <vector>
 
 /****************************************************************************
 ** VariantDB.cc
@@ -26,46 +26,63 @@
 
 // add variant to DB and update counts per position
 void VariantDB_t::addVar(Variant_t v) {
-	
-	string key = sha256(v.getSignature());	
-    map<string,Variant_t>::iterator it_v = DB.find(key);
-	
-	if (it_v != DB.end()) {		
-		// keep highest supporting coverage found
-		if (it_v->second.ref_cov_normal_fwd < v.ref_cov_normal_fwd) { it_v->second.ref_cov_normal_fwd = v.ref_cov_normal_fwd; }
-		if (it_v->second.ref_cov_normal_rev < v.ref_cov_normal_rev) { it_v->second.ref_cov_normal_rev = v.ref_cov_normal_rev; }
-		if (it_v->second.ref_cov_tumor_fwd  < v.ref_cov_tumor_fwd ) { it_v->second.ref_cov_tumor_fwd  = v.ref_cov_tumor_fwd;  }
-		if (it_v->second.ref_cov_tumor_rev  < v.ref_cov_tumor_rev ) { it_v->second.ref_cov_tumor_rev  = v.ref_cov_tumor_rev;  }
-		if (it_v->second.alt_cov_normal_fwd < v.alt_cov_normal_fwd) { it_v->second.alt_cov_normal_fwd = v.alt_cov_normal_fwd; }
-		if (it_v->second.alt_cov_normal_rev < v.alt_cov_normal_rev) { it_v->second.alt_cov_normal_rev = v.alt_cov_normal_rev; }		
-		if (it_v->second.alt_cov_tumor_fwd  < v.alt_cov_tumor_fwd ) { it_v->second.alt_cov_tumor_fwd  = v.alt_cov_tumor_fwd;  }
-		if (it_v->second.alt_cov_tumor_rev  < v.alt_cov_tumor_rev ) { it_v->second.alt_cov_tumor_rev  = v.alt_cov_tumor_rev;  }
-		
-		it_v->second.reGenotype(); // recompute genotype
-	}
-	else { 
-		DB.insert(pair<string,Variant_t>(key,v));
-	}
+  string key = sha256(v.getSignature());
+  map<string, Variant_t>::iterator it_v = DB.find(key);
 
-	// updated counts of variants per position in the normal
-	/*
-    if( ((v.getGenotypeNormal()).compare("0/0")!=0) && ((v.ref_cov_normal_fwd + v.ref_cov_normal_rev)>0) ) {
-		
-		string pos = v.getPosition();
-	    unordered_map<string,int>::iterator it_p = nCNT.find(pos);	
-		
-		if (it_p != nCNT.end()) { 
-			it_p->second += 1; 
-		}
-		else { 
-			nCNT.insert(pair<string,int>(pos,1)); 
-		}
+  if (it_v != DB.end()) {
+    // keep highest supporting coverage found
+    if (it_v->second.ref_cov_normal_fwd < v.ref_cov_normal_fwd) {
+      it_v->second.ref_cov_normal_fwd = v.ref_cov_normal_fwd;
     }
-	*/
+    if (it_v->second.ref_cov_normal_rev < v.ref_cov_normal_rev) {
+      it_v->second.ref_cov_normal_rev = v.ref_cov_normal_rev;
+    }
+    if (it_v->second.ref_cov_tumor_fwd < v.ref_cov_tumor_fwd) {
+      it_v->second.ref_cov_tumor_fwd = v.ref_cov_tumor_fwd;
+    }
+    if (it_v->second.ref_cov_tumor_rev < v.ref_cov_tumor_rev) {
+      it_v->second.ref_cov_tumor_rev = v.ref_cov_tumor_rev;
+    }
+    if (it_v->second.alt_cov_normal_fwd < v.alt_cov_normal_fwd) {
+      it_v->second.alt_cov_normal_fwd = v.alt_cov_normal_fwd;
+    }
+    if (it_v->second.alt_cov_normal_rev < v.alt_cov_normal_rev) {
+      it_v->second.alt_cov_normal_rev = v.alt_cov_normal_rev;
+    }
+    if (it_v->second.alt_cov_tumor_fwd < v.alt_cov_tumor_fwd) {
+      it_v->second.alt_cov_tumor_fwd = v.alt_cov_tumor_fwd;
+    }
+    if (it_v->second.alt_cov_tumor_rev < v.alt_cov_tumor_rev) {
+      it_v->second.alt_cov_tumor_rev = v.alt_cov_tumor_rev;
+    }
+
+    it_v->second.reGenotype();  // recompute genotype
+  } else {
+    DB.insert(pair<string, Variant_t>(key, v));
+  }
+
+  // updated counts of variants per position in the normal
+  /*
+if( ((v.getGenotypeNormal()).compare("0/0")!=0) && ((v.ref_cov_normal_fwd +
+v.ref_cov_normal_rev)>0) ) {
+
+          string pos = v.getPosition();
+      unordered_map<string,int>::iterator it_p = nCNT.find(pos);
+
+          if (it_p != nCNT.end()) {
+                  it_p->second += 1;
+          }
+          else {
+                  nCNT.insert(pair<string,int>(pos,1));
+          }
+}
+  */
 }
 
-void VariantDB_t::printHeader(const string version, const string reference, char * date, Filters &fs, string &sample_name_N, string &sample_name_T) {
-	
+void VariantDB_t::printHeader(const string version, const string reference,
+                              char *date, Filters &fs, string &sample_name_N,
+                              string &sample_name_T) {
+  // clang-format off
 	cout << "##fileformat=VCFv4.2\n"
 			"##fileDate=" << date << ""
 			"##source=lancet " << version << "\n"
@@ -99,28 +116,31 @@ void VariantDB_t::printHeader(const string version, const string reference, char
 			"##FORMAT=<ID=SR,Number=.,Type=Integer,Description=\"strand counts for ref: # of supporting forward,reverse reads for reference allele\">\n"
 			"##FORMAT=<ID=SA,Number=.,Type=Integer,Description=\"strand counts for alt: # of supporting forward,reverse reads for alterantive allele\">\n"
 			"#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t" << sample_name_N << "\t" << sample_name_T << "\n";
+  // clang-format on
 }
 
 // print variant in VCF format
-void VariantDB_t::printToVCF(const string version, const string reference, char * date, Filters &fs, string &sample_name_N, string &sample_name_T) {
-	
-	cerr << "Export variants to VCF file" << endl;
-	
-	printHeader(version,reference,date,fs,sample_name_N,sample_name_T);
-	
-	// dump map content to vector for custom sorting
-	vector< pair<string,Variant_t> > myVec(DB.begin(), DB.end());
-	// sort based on chromosome location
-	sort(myVec.begin(),myVec.end(),byPos());
+void VariantDB_t::printToVCF(const string version, const string reference,
+                             char *date, Filters &fs, string &sample_name_N,
+                             string &sample_name_T) {
+  cerr << "Export variants to VCF file" << endl;
 
-	vector< pair<string,Variant_t> >::iterator it;
-	for (it=myVec.begin(); it!=myVec.end(); ++it) {
-		//cerr << it->first << "\t";
-		
-		//string pos = (it->second).getPosition();
-	    //unordered_map<string,int>::iterator itp = nCNT.find(pos);
-		//if (itp == nCNT.end()) { // print variant if no muations in the normal at locus
-			it->second.printVCF();
-		//}
-	}	
+  printHeader(version, reference, date, fs, sample_name_N, sample_name_T);
+
+  // dump map content to vector for custom sorting
+  vector<pair<string, Variant_t> > myVec(DB.begin(), DB.end());
+  // sort based on chromosome location
+  sort(myVec.begin(), myVec.end(), byPos());
+
+  vector<pair<string, Variant_t> >::iterator it;
+  for (it = myVec.begin(); it != myVec.end(); ++it) {
+    // cerr << it->first << "\t";
+
+    // string pos = (it->second).getPosition();
+    // unordered_map<string,int>::iterator itp = nCNT.find(pos);
+    // if (itp == nCNT.end()) { // print variant if no muations in the normal at
+    // locus
+    it->second.printVCF();
+    //}
+  }
 }
