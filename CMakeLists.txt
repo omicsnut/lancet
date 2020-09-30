@@ -49,7 +49,6 @@ add_executable(
   "src/Edge.hh"
   "src/Edge.cc"
   "src/ErrorCorrector.hh"
-  "src/FET.hh"
   "src/Graph.hh"
   "src/Graph.cc"
   "src/Lancet.hh"

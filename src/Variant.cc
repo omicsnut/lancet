@@ -22,6 +22,8 @@
 **
 *************************** /COPYRIGHT **************************************/
 
+#include "htslib/kfunc.h"
+
 void Variant_t::printVCF() {
   // CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT
   // Pat4-FF-Normal-DNA      Pat4-FF-Tumor-DNA
@@ -272,14 +274,12 @@ double Variant_t::compute_FET_score() {
   double fet_score = 0.0;
   // double fet_score_right = 0.0;
 
-  FET_t fet;
-
   // fisher exaxt test (FET) score for tumor/normal coverages
-  prob = fet.kt_fisher_exact((ref_cov_normal_fwd + ref_cov_normal_rev),
-                             (ref_cov_tumor_fwd + ref_cov_tumor_rev),
-                             (alt_cov_normal_fwd + alt_cov_normal_rev),
-                             (alt_cov_tumor_fwd + alt_cov_tumor_rev), &left,
-                             &right, &twotail);
+  prob = kt_fisher_exact((ref_cov_normal_fwd + ref_cov_normal_rev),
+                         (ref_cov_tumor_fwd + ref_cov_tumor_rev),
+                         (alt_cov_normal_fwd + alt_cov_normal_rev),
+                         (alt_cov_tumor_fwd + alt_cov_tumor_rev), &left, &right,
+                         &twotail);
   if (prob == 1.0) {
     fet_score = 0.0;
   } else if (prob == 0.0) {
@@ -308,12 +308,10 @@ double Variant_t::compute_SB_score() {
 
   double sb_score = 0.0;
 
-  FET_t fet;
-
   // fisher exaxt test score for strand bias in tumor
-  prob = fet.kt_fisher_exact(ref_cov_tumor_fwd, ref_cov_tumor_rev,
-                             alt_cov_tumor_fwd, alt_cov_tumor_rev, &left,
-                             &right, &twotail);
+  prob =
+      kt_fisher_exact(ref_cov_tumor_fwd, ref_cov_tumor_rev, alt_cov_tumor_fwd,
+                      alt_cov_tumor_rev, &left, &right, &twotail);
   if (prob == 1) {
     sb_score = 0.0;
   } else {

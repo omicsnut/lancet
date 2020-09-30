@@ -33,7 +33,6 @@
 #include <limits>
 #include <string>
 
-#include "FET.hh"
 #include "util.hh"
 
 using namespace std;
