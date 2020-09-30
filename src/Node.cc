@@ -25,6 +25,8 @@
 // isTandem
 //////////////////////////////////////////////////////////////
 
+#include <algorithm>
+
 bool Node_t::isTandem() {
   for (unsigned int i = 0; i < edges_m.size(); ++i) {
     if (edges_m[i].nodeid_m == nodeid_m) {
@@ -247,7 +249,7 @@ void Node_t::revreads() {
 //////////////////////////////////////////////////////////////
 
 void Node_t::sortReadStarts() {
-  sort(readstarts_m.begin(), readstarts_m.end(), ReadStart_t::cmpstarts);
+    std::sort(readstarts_m.begin(), readstarts_m.end(), ReadStart_t::cmpstarts);
 }
 
 // addContigLink
@@ -496,7 +498,7 @@ bool Node_t::hasOverlappingMate(string& read_name, int id) {
 
   if (id == 1) {
     // if (mate2_name.find(read_name) != mate2_name.end()) { ans = true; }
-    if (binary_search(mate2_name.begin(), mate2_name.end(), read_name)) {
+    if (std::binary_search(mate2_name.begin(), mate2_name.end(), read_name)) {
       ans = true;
     }
 
@@ -507,7 +509,7 @@ bool Node_t::hasOverlappingMate(string& read_name, int id) {
 
   if (id == 2) {
     // if (mate1_name.find(read_name) != mate1_name.end()) { ans = true; }
-    if (binary_search(mate1_name.begin(), mate1_name.end(), read_name)) {
+    if (std::binary_search(mate1_name.begin(), mate1_name.end(), read_name)) {
       ans = true;
     }
 
