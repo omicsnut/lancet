@@ -27,6 +27,8 @@
 #include <iostream>
 #include <unordered_map>
 
+#include "Graph.hh"
+
 using namespace std;
 
 class ErrorCorrector {
