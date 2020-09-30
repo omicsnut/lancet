@@ -1437,6 +1437,7 @@ Path_t *Graph_t::bfs(Node_t *source, Node_t *sink, Ori_t dir, Ref_t *ref) {
     best = NULL;
   }
 
+  cerr << "Returning from EdmonKarp after " << itos(visit) << " visits \n";
   return best;
 }
 
@@ -1516,7 +1517,7 @@ void Graph_t::eka(Node_t *source, Node_t *sink, Ori_t dir, Ref_t *ref, FILE *fp,
   //">stats\treflen=%d\tnumreads=%d\tcov=%0.02f\ttrim5=%d\ttrim3=%d\tnodes=%d\trefnodes=%d\tcomp=%d\trefcomp=%d\tvisit=%d\tcomplete=%d\tallcycles=%d\tshortpath=%d\ttoolong=%d\tdeadend=%d\tperfect=%d\twithsnps=%d\twithindel=%d\twithmix=%d\twithmixindel=%d\twithmixsnp=%d\twithvar=%d\n",
   //		(int) ref_m->seq.length(), (int) readid2info.size(),
   //((float)totalreadbp_m / (float) ref_m->seq.length()),
-  //ref_m->trim5, ref_m->trim3, (int) nodes_m.size()-2, ref_m->refnodes-2,
+  // ref_m->trim5, ref_m->trim3, (int) nodes_m.size()-2, ref_m->refnodes-2,
   // ref_m->allcomp, ref_m->refcomp, 		visit, complete, allcycles,
   // shortpaths, toolong, deadend, perfect, withsnps, withindel, withmix,
   // withmixindel, withmixsnp, withvar);
