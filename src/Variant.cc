@@ -263,6 +263,14 @@ void Variant_t::reGenotype() {
                       (alt_cov_tumor_fwd + alt_cov_tumor_rev));
 }
 
+static inline double PhredScore(const double probability) {
+  if (probability == 1.0) return 0.0;
+  if (probability == 0.0) {
+    return -10.0 * std::log10(1 / std::numeric_limits<double>::max());
+  }
+  return -10.0 * std::log10(probability);
+}
+
 // 	compute fisher exaxt test score for tumor/normal coverages
 //////////////////////////////////////////////////////////////
 double Variant_t::compute_FET_score() {
@@ -271,32 +279,14 @@ double Variant_t::compute_FET_score() {
   double right = 0.0;
   double twotail = 0.0;
 
-  double fet_score = 0.0;
-  // double fet_score_right = 0.0;
-
   // fisher exaxt test (FET) score for tumor/normal coverages
   prob = kt_fisher_exact((ref_cov_normal_fwd + ref_cov_normal_rev),
                          (ref_cov_tumor_fwd + ref_cov_tumor_rev),
                          (alt_cov_normal_fwd + alt_cov_normal_rev),
                          (alt_cov_tumor_fwd + alt_cov_tumor_rev), &left, &right,
                          &twotail);
-  if (prob == 1.0) {
-    fet_score = 0.0;
-  } else if (prob == 0.0) {
-    fet_score = -10.0 * log10(1 / std::numeric_limits<double>::max());
-  } else {
-    fet_score = -10.0 * log10(prob);
-  }
 
-  // cerr << endl;
-  // cerr.precision(100);
-  // cerr << "FET score left: " << fet_score_left << " (p = " << left << ")" <<
-  // endl; cerr << "FET score right: " << fet_score_right << " (p = " << right
-  // <<
-  // ")" << endl; cerr << "FET score twotail: " << fet_score_twotail << " (p = "
-  // << twotail << ")" << endl;
-
-  return fet_score;
+  return PhredScore(prob);
 }
 
 // compute fisher exact test score for strand bias (SB) in tumor
@@ -306,19 +296,12 @@ double Variant_t::compute_SB_score() {
   double right = 0.0;
   double twotail = 0.0;
 
-  double sb_score = 0.0;
-
   // fisher exaxt test score for strand bias in tumor
   prob =
       kt_fisher_exact(ref_cov_tumor_fwd, ref_cov_tumor_rev, alt_cov_tumor_fwd,
                       alt_cov_tumor_rev, &left, &right, &twotail);
-  if (prob == 1) {
-    sb_score = 0.0;
-  } else {
-    sb_score = -10.0 * log10(prob);
-  }
 
-  return sb_score;
+  return PhredScore(prob);
 }
 
 // compute best state for the variant
