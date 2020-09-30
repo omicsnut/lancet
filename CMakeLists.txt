@@ -84,6 +84,7 @@ target_link_libraries(
   lancet
   PRIVATE ${LIBHTS}
           ${LIBBAMTOOLS}
+          Threads::Threads
           ZLIB::ZLIB
           BZip2::BZip2
           CURL::libcurl
