@@ -761,14 +761,32 @@ bool Microassembler::extractReads(BamReader &reader, Graph_t &g, Ref_t *refinfo,
           (readgroups.find(rg) !=
            readgroups.end())) {  // select reads in the read group RG
 
+        std::string sequence = al.QueryBases;
+        std::string quality = al.Qualities;
+
         if (!(al.IsMapped())) {  // unmapped read
-          g.addAlignment(sampleType, al.Name, al.QueryBases, al.Qualities, mate,
+          const std::size_t alnEndPos = al.GetEndPosition();
+          const std::size_t fullSeqLen = al.QueryBases.length();
+
+          const std::size_t startIdx = al.Position < region.LeftPosition
+                                           ? (region.LeftPosition - al.Position)
+                                           : 0;
+
+          const std::size_t windowSeqLen =
+              alnEndPos > region.RightPosition
+                  ? (fullSeqLen - (alnEndPos - region.RightPosition))
+                  : fullSeqLen;
+
+          sequence = sequence.substr(startIdx, windowSeqLen);
+          quality = quality.substr(startIdx, windowSeqLen);
+
+          g.addAlignment(sampleType, al.Name, sequence, quality, mate,
                          Graph_t::CODE_BASTARD, code, strand);
           // g.addpaired("tumor", al.Name, al.QueryBases, oq, mate,
           // Graph_t::CODE_BASTARD, code, strand);
           ++num_unmapped;
         } else {  // mapped reads
-          g.addAlignment(sampleType, al.Name, al.QueryBases, al.Qualities, mate,
+          g.addAlignment(sampleType, al.Name, sequence, quality, mate,
                          Graph_t::CODE_MAPPED, code, strand);
           // g.addpaired("tumor", al.Name, al.QueryBases, oq, mate,
           // Graph_t::CODE_MAPPED, code, strand);
@@ -776,7 +794,7 @@ bool Microassembler::extractReads(BamReader &reader, Graph_t &g, Ref_t *refinfo,
         // cout << al.Name << endl;
         ++readcnt;
         ++tot_reads_window;
-        totalreadbp += (al.QueryBases).length();
+        totalreadbp += sequence.length();
 
         // void addMates(ReadId_t r1, ReadId_t r2)
         //{
