@@ -335,10 +335,10 @@ bool Microassembler::isActiveRegion(BamReader &reader, Ref_t *refinfo,
                                           // alignment's string data fields
 
     int alstart = al.Position;
-    int alend = al.GetEndPosition();
-    if ((alstart < region.LeftPosition) || (alend > region.RightPosition)) {
-      continue;
-    }  // skip alignments outside region
+    // int alend = al.GetEndPosition();
+    // if ((alstart < region.LeftPosition) || (alend > region.RightPosition)) {
+    //   continue;
+    // }  // skip alignments outside region
 
     if ((al.MapQuality >= MQ) &&
         !al.IsDuplicate()) {  // only keep reads with high map quality and skip
@@ -616,11 +616,11 @@ bool Microassembler::extractReads(BamReader &reader, Graph_t &g, Ref_t *refinfo,
       break;
     }
 
-    int alstart = al.Position;
-    int alend = al.GetEndPosition();
-    if ((alstart < region.LeftPosition) || (alend > region.RightPosition)) {
-      continue;
-    }  // skip alignments outside region
+    // int alstart = al.Position;
+    // int alend = al.GetEndPosition();
+    // if ((alstart < region.LeftPosition) || (alend > region.RightPosition)) {
+    //   continue;
+    // }  // skip alignments outside region
 
     if (PRIMARY_ALIGNMENT_ONLY && !al.IsPrimaryAlignment()) {
       continue;
